@@ -1,0 +1,556 @@
+/* ============================================================
+   MeshStudio 浅色主题 · 深茄紫
+   canvas #F5F6F7   surface #FFFFFF   line #D9DCDF  line-strong #C1C6CC
+   ink #212529      ink-2 #495057     ink-3 #868E96
+   accent #583266   hover #452750     soft #F3ECF6  sel #E7DAEE
+   ok #2F7D5B       warn #B45309      err #C0392B
+   深茄紫仪器风：标题栏+tab行一整块紫色色块（Saribbon 结构），
+   tab 白字大号，选中融入功能区；强调色全线茄紫，冷艳而克制。
+   签名元素：状态栏「仪器读数」徽章 + 功能区分组刻痕
+   ============================================================ */
+
+* {
+    outline: none;
+}
+
+QWidget {
+    background-color: #F5F6F7;
+    color: #212529;
+    font-family: "Microsoft YaHei UI";
+    font-size: 15px;
+}
+
+/* ---------- 菜单栏 ---------- */
+
+QMenuBar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #D9DCDF;
+    padding: 2px 6px;
+}
+QMenuBar::item {
+    background: transparent;
+    color: #495057;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 15px;
+}
+QMenuBar::item:selected {
+    background: #EDF0F3;
+    color: #212529;
+}
+
+QMenu {
+    background-color: #FFFFFF;
+    border: 1px solid #C1C6CC;
+    border-radius: 8px;
+    padding: 5px;
+}
+QMenu::item {
+    color: #212529;
+    padding: 8px 28px 8px 22px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+QMenu::item:selected {
+    background: #F3ECF6;
+    color: #583266;
+}
+QMenu::separator {
+    height: 1px;
+    background: #D9DCDF;
+    margin: 5px 8px;
+}
+
+/* ---------- 工具栏 ---------- */
+
+QToolBar {
+    background-color: #FFFFFF;
+    border: none;
+    border-bottom: 1px solid #D9DCDF;
+    padding: 4px 8px;
+    spacing: 2px;
+}
+QToolBar::separator {
+    width: 1px;
+    background: #D9DCDF;
+    margin: 6px 4px;
+}
+QToolButton {
+    background: transparent;
+    color: #495057;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 11px;
+}
+QToolButton:hover {
+    background: #EDF0F3;
+    color: #212529;
+}
+QToolButton:pressed {
+    background: #E2E6EA;
+}
+
+/* ---------- 功能区：深茄紫色块式顶栏 ----------
+   标题栏(DWM)+tab行 = 一整块深茄紫 #583266；
+   tab 白字，选中 tab 变浅灰底黑字、向下融入功能区。 */
+
+QWidget#ribbonBar {
+    background-color: #583266;
+    border-bottom: none;
+}
+QWidget#ribbonBar QTabBar {
+    background-color: #583266;
+}
+QWidget#ribbonBar QStackedWidget {
+    background-color: #F5F6F7;
+}
+QWidget#ribbonPage {
+    background-color: #F5F6F7;
+    border-bottom: 1px solid #D9DCDF;
+}
+QTabBar::tab {
+    background: transparent;
+    color: #DCE8F2;
+    padding: 10px 30px 7px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 15px;
+}
+QTabBar::tab:selected {
+    background: #F5F6F7;
+    color: #212529;
+    font-weight: 700;
+    border-bottom: 3px solid #F5F6F7;
+}
+QTabBar::tab:hover:!selected {
+    color: #FFFFFF;
+    background: #6B3D7A;
+}
+
+/* ---------- Dock 自定义标题栏 ---------- */
+
+QWidget#dockTitleBar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #D9DCDF;
+}
+QLabel#dockTitleIcon {
+    background: transparent;
+}
+QLabel#dockTitleLabel {
+    background: transparent;
+    color: #343A40;
+    font-weight: 600;
+    font-size: 15px;
+}
+QToolButton#dockBtn {
+    background: transparent;
+    border-radius: 4px;
+    padding: 3px;
+}
+QToolButton#dockBtn:hover {
+    background: #F3ECF6;
+}
+
+QDockWidget {
+    color: #343A40;
+}
+QMainWindow::separator {
+    width: 4px;
+    height: 4px;
+    background: #F5F6F7;
+}
+QMainWindow::separator:hover {
+    background: #58326655;
+}
+
+/* ---------- 模型树 ---------- */
+
+QTreeWidget {
+    background-color: #FFFFFF;
+    border: none;
+    alternate-background-color: #FAFBFC;
+    padding: 4px 2px;
+    font-size: 16px;
+}
+QTreeWidget::item {
+    padding: 7px 3px;
+    border-radius: 5px;
+}
+QTreeWidget::item:hover {
+    background: #EDF0F3;
+}
+QTreeWidget::item:selected {
+    background: #E7DAEE;
+    color: #212529;
+}
+
+/* ---------- 参数面板（白色表面） ---------- */
+
+QWidget#panelSurface {
+    background-color: #FFFFFF;
+}
+
+QGroupBox {
+    background-color: #FFFFFF;
+    border: 1px solid #D9DCDF;
+    border-radius: 8px;
+    margin-top: 14px;
+    padding: 10px 8px 8px 8px;
+    font-weight: 600;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 10px;
+    top: 2px;
+    padding: 0 4px;
+    background-color: #FFFFFF;
+    color: #583266;
+}
+
+QLabel {
+    background: transparent;
+}
+#dimLabel {
+    color: #868E96;
+    font-size: 13px;
+}
+QLabel#propTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+}
+QLabel#propKey {
+    color: #495057;
+}
+QLabel#propValue {
+    color: #212529;
+}
+QLabel#propHint {
+    color: #868E96;
+}
+QFrame#propSeparator {
+    border: none;
+    border-top: 1px solid #D9DCDF;
+    max-height: 1px;
+}
+
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QDoubleSpinBox, QComboBox {
+    background-color: #FFFFFF;
+    border: 1px solid #C1C6CC;
+    border-radius: 6px;
+    padding: 5px 9px;
+    color: #212529;
+    selection-background-color: #E7DAEE;
+    selection-color: #212529;
+    font-size: 14px;
+}
+QDoubleSpinBox:hover, QComboBox:hover {
+    border: 1px solid #ADB3BA;
+}
+QDoubleSpinBox:focus, QComboBox:focus {
+    border: 1px solid #583266;
+}
+QComboBox::drop-down {
+    border: none;
+    width: 24px;
+}
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    border: 1px solid #C1C6CC;
+    selection-background-color: #F3ECF6;
+    selection-color: #583266;
+}
+
+QCheckBox {
+    spacing: 8px;
+    color: #343A40;
+}
+QCheckBox::indicator {
+    width: 17px;
+    height: 17px;
+    border: 1px solid #ADB3BA;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+}
+QCheckBox::indicator:hover {
+    border-color: #583266;
+}
+QCheckBox::indicator:checked {
+    background-color: #583266;
+    border-color: #583266;
+}
+
+QPushButton {
+    background-color: #FFFFFF;
+    color: #212529;
+    border: 1px solid #C1C6CC;
+    border-radius: 6px;
+    padding: 7px 15px;
+}
+QPushButton:hover {
+    background-color: #F1F3F5;
+    border-color: #ADB3BA;
+}
+QPushButton:pressed {
+    background-color: #E6E9EC;
+}
+QPushButton:disabled {
+    color: #868E96;
+    background-color: #F5F6F7;
+}
+/* checked 按钮显式样式：Fusion 默认会把 checked 渲染成深色块（属性面板"隐藏自身"） */
+QPushButton:checked {
+    background-color: #F3ECF6;
+    color: #583266;
+    border: 1px solid #C9A9D6;
+    font-weight: 600;
+}
+QPushButton:checked:hover {
+    background-color: #E7DAEE;
+}
+/* 属性面板内联小按钮：减少垂直 padding 防文字挤压 */
+QPushButton#inlineBtn {
+    padding: 2px 14px;
+    font-size: 14px;
+}
+
+QPushButton#primaryButton {
+    background-color: #583266;
+    color: #FFFFFF;
+    border: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+QPushButton#primaryButton:hover {
+    background-color: #452750;
+}
+QPushButton#primaryButton:pressed {
+    background-color: #381F40;
+}
+QPushButton#primaryButton:disabled {
+    background-color: #A9C0D6;
+    color: #F0F5FA;
+}
+
+/* ---------- 滑块（橙色手柄，替代 Fusion 原生灰蓝） ---------- */
+
+QSlider::groove:horizontal {
+    height: 6px;
+    border: none;
+    border-radius: 3px;
+    background: #D5D9DD;
+}
+QSlider::sub-page:horizontal {
+    background: #B494C4;
+    border-radius: 3px;
+}
+QSlider::handle:horizontal {
+    width: 16px;
+    height: 16px;
+    margin: -5px 0;
+    border-radius: 8px;
+    background: #583266;
+    border: 2px solid #FFFFFF;
+}
+QSlider::handle:horizontal:hover {
+    background: #452750;
+}
+QSlider::groove:vertical {
+    width: 6px;
+    border: none;
+    border-radius: 3px;
+    background: #D5D9DD;
+}
+QSlider::add-page:vertical {
+    background: #B494C4;
+    border-radius: 3px;
+}
+QSlider::handle:vertical {
+    height: 16px;
+    width: 16px;
+    margin: 0 -5px;
+    border-radius: 8px;
+    background: #583266;
+    border: 2px solid #FFFFFF;
+}
+
+/* ---------- 表格 ---------- */
+
+QTableWidget {
+    background-color: #FFFFFF;
+    alternate-background-color: #FAFBFC;
+    gridline-color: #E9ECEE;
+    border: 1px solid #D9DCDF;
+    border-radius: 6px;
+    selection-background-color: #E7DAEE;
+    selection-color: #212529;
+}
+QHeaderView::section {
+    background-color: #FFFFFF;
+    color: #495057;
+    border: none;
+    border-bottom: 1px solid #D9DCDF;
+    padding: 6px 9px;
+    font-weight: 600;
+}
+
+/* ---------- 输出日志 ---------- */
+
+QPlainTextEdit {
+    background-color: #FFFFFF;
+    color: #343A40;
+    border: none;
+    selection-background-color: #E7DAEE;
+}
+
+/* ---------- 进度条 ---------- */
+
+QProgressBar {
+    background: #D9DCDF;
+    border: none;
+    border-radius: 3px;
+}
+QProgressBar::chunk {
+    background-color: #583266;
+    border-radius: 3px;
+}
+
+/* ---------- 滚动条 ---------- */
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 9px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background: #C4C9CF;
+    border-radius: 4px;
+    min-height: 24px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #ADB3BA;
+}
+QScrollBar:horizontal {
+    background: transparent;
+    height: 9px;
+    margin: 0;
+}
+QScrollBar::handle:horizontal {
+    background: #C4C9CF;
+    border-radius: 4px;
+    min-width: 24px;
+}
+QScrollBar::handle:horizontal:hover {
+    background: #ADB3BA;
+}
+QScrollBar::add-line, QScrollBar::sub-line {
+    width: 0;
+    height: 0;
+}
+QScrollBar::add-page, QScrollBar::sub-page {
+    background: transparent;
+}
+
+/* ---------- 状态栏 · 仪器读数徽章（签名元素） ---------- */
+
+QStatusBar {
+    background-color: #FFFFFF;
+    border-top: 1px solid #D9DCDF;
+    color: #495057;
+}
+QStatusBar QLabel {
+    background: transparent;
+    color: #495057;
+}
+QStatusBar QLabel#statusMode {
+    color: #495057;
+    padding: 0 10px;
+}
+QFrame#statusBadge {
+    background-color: #FFFFFF;
+    border: 1px solid #CDD2D8;
+    border-radius: 8px;
+    margin: 3px 3px 3px 0;
+}
+QLabel#statusBadgeLabel {
+    background: transparent;
+    color: #868E96;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+QLabel#statusBadgeValue {
+    background: transparent;
+    color: #212529;
+    font-family: "Consolas";
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ---------- 功能区按钮 ---------- */
+
+QWidget#ribbonPage QToolButton {
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 15px;
+    color: #343A40;
+}
+QWidget#ribbonPage QToolButton:hover {
+    background: #F3ECF6;
+    border-color: #C9A9D6;
+}
+QWidget#ribbonPage QToolButton:pressed {
+    background: #E7DAEE;
+    border-color: #B08CC2;
+}
+QWidget#ribbonPage QToolButton:checked {
+    background: #E7DAEE;
+    border-color: #B08CC2;
+    color: #452750;
+    font-weight: 600;
+}
+QToolButton#ribbonLargeButton {
+    min-width: 84px;
+    padding: 7px 8px 5px;
+}
+QToolButton#ribbonSmallButton {
+    min-height: 34px;
+    padding: 5px 10px;
+    font-size: 15px;
+}
+QToolButton#ribbonDirButton {
+    padding: 6px 5px;
+    font-size: 14px;
+}
+/* 分组标题：细刻痕分隔，仪器面板分区感 */
+QLabel#ribbonCaption {
+    color: #868E96;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    background: transparent;
+    border-bottom: 1px solid #D9DCDF;
+    padding-bottom: 2px;
+    margin: 2px 2px 0;
+}
+QFrame#ribbonSeparator {
+    background: #D9DCDF;
+    border: none;
+    max-width: 1px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+}
+
+QToolTip {
+    background-color: #FFFFFF;
+    color: #212529;
+    border: 1px solid #C1C6CC;
+    padding: 5px 9px;
+    border-radius: 4px;
+    font-size: 14px;
+}

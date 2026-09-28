@@ -1,0 +1,46 @@
+# ===== 构建产物 =====
+build/
+build-*/
+out/
+bin/
+obj/
+*.obj
+*.o
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.exe
+
+# ===== IDE / 工具 =====
+.vs/
+.vscode/
+.idea/
+*.user
+*.opensdf
+*.sdf
+*.suo
+.zcodeignore
+.tmpwork_trace.txt
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 运行时生成物 =====
+# 自测输出的 STL（由 tests 生成，非源码）
+test_output/
+meshstudio_vtk.log
+*.log
+
+# ===== AI 协作工具的本地状态 =====
+# 含会话记忆 / 变更索引等本机状态，不属于源码，也不该跨机器同步。
+# 如需把工作日志一并入库，把下面这行注释掉即可。
+.workbuddy-ai/
+
+# ===== 第三方论文：不入库（版权 + 非源码）=====
+# 本地保留供查阅，仓库里只留自己的分析文档 README-shewchuk-failure-analysis.md
+docs/references/*.pdf
+docs/references/_shewchuk_clean.txt

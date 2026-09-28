@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="420" viewBox="0 0 680 420">
+  <rect x="1" y="1" width="678" height="418" rx="14" fill="#f6f5f7" stroke="#e3e1e6" stroke-width="2"/>
+  <g transform="translate(296,84)">
+    <path d="M44 4 80 24.5v41L44 86 8 65.5v-41Z" stroke="#583266" stroke-width="3.4" fill="#583266" fill-opacity="0.08" stroke-linejoin="round"/>
+    <path d="M44 4v82M8 24.5l72 41M80 24.5 8 65.5" stroke="#583266" stroke-width="2" opacity="0.5"/>
+    <circle cx="44" cy="45" r="3.4" fill="#583266"/>
+  </g>
+  <text x="340" y="212" text-anchor="middle" font-family="Microsoft YaHei UI" font-size="38" font-weight="700" fill="#212529" letter-spacing="2">MeshStudio</text>
+  <text x="340" y="246" text-anchor="middle" font-family="Microsoft YaHei UI" font-size="14" fill="#495057" letter-spacing="6">FDTD PRE-PROCESSING</text>
+  <rect x="314" y="264" width="52" height="22" rx="11" fill="#F3ECF6"/>
+  <text x="340" y="279.5" text-anchor="middle" font-family="Consolas" font-size="12" fill="#583266">v0.1.0</text>
+  <text x="340" y="358" text-anchor="middle" font-family="Microsoft YaHei UI" font-size="12" fill="#868E96">正在初始化…</text>
+</svg>
