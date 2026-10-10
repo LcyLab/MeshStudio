@@ -1,0 +1,27 @@
+# VS 使用真实模块目录；头文件与实现放在同一组。
+function(meshstudio_group_sources target)
+    get_target_property(sources ${target} SOURCES)
+    set(module_sources "")
+    foreach(source IN LISTS sources)
+        get_filename_component(absolute_source "${source}" ABSOLUTE
+            BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+        if(absolute_source MATCHES "^${CMAKE_CURRENT_SOURCE_DIR}/src/")
+            list(APPEND module_sources "${absolute_source}")
+            # 显式编译清单中的 cpp 配对头文件也应在工程树中可见。
+            if(absolute_source MATCHES "\\.cpp$")
+                string(REGEX REPLACE "\\.cpp$" ".h" header "${absolute_source}")
+                if(EXISTS "${header}")
+                    list(APPEND module_sources "${header}")
+                    target_sources(${target} PRIVATE "${header}")
+                endif()
+            endif()
+        endif()
+    endforeach()
+    list(REMOVE_DUPLICATES module_sources)
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" FILES ${module_sources})
+endfunction()
+
+meshstudio_group_sources(MeshStudio)
+meshstudio_group_sources(mesher)
+source_group("resources" FILES "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
+source_group("generated\\Qt" REGULAR_EXPRESSION ".*mocs_compilation.*\\.cpp$|.*qrc_.*\\.cpp$")

@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/Constrained2D.h"
-#include "core/mesher/Delaunay2D.h"
-#include "core/mesher/GeomPredicates.h"
-#include "core/mesher/Mesh2D.h"
-#include "core/mesher/Ruppert2D.h"
+#include "mesh/planar/Constrained2D.h"
+#include "mesh/planar/Delaunay2D.h"
+#include "geometry/predicates/GeomPredicates.h"
+#include "mesh/data/Mesh2D.h"
+#include "mesh/planar/Ruppert2D.h"
 
 using namespace mesher;
 

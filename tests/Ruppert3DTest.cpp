@@ -14,10 +14,10 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/Constrained3D.h"
-#include "core/mesher/Delaunay3D.h"
-#include "core/mesher/Ruppert3D.h"
-#include "core/mesher/TetMesh3D.h"
+#include "mesh/volume/Constrained3D.h"
+#include "mesh/volume/Delaunay3D.h"
+#include "mesh/volume/Ruppert3D.h"
+#include "mesh/data/TetMesh3D.h"
 
 using namespace mesher;
 
@@ -123,9 +123,11 @@ void testCube()
     p.maxEdgeLength = 0.2;
     p.radiusEdgeRatio = 2.0;
     Ruppert3DResult r = ruppertRefine3D(mesh, faces, p);
-    check(r.converged, "ruppertRefine3D converged");
+    check(!r.converged, "oversize boundary tetrahedra must not report convergence");
+    check(r.unresolvedTets > 0 && !r.diagnostic.empty() && r.error.empty(),
+          "unresolved boundary tetrahedra have explicit nonfatal diagnostics");
     if (!r.converged)
-        std::cerr << "  error: " << r.error << std::endl;
+        std::cerr << "  diagnostic: " << r.diagnostic << std::endl;
     std::string verr;
     check(mesh.validate(&verr), "mesh.validate");
     if (!verr.empty())
@@ -160,9 +162,11 @@ void testTetrahedronRefine()
     Ruppert3DParams p;
     p.maxEdgeLength = 0.15;
     Ruppert3DResult r = ruppertRefine3D(mesh, faces, p);
-    check(r.converged, "ruppertRefine3D converged");
+    check(!r.converged, "oversize boundary tetrahedra must not report convergence");
+    check(r.unresolvedTets > 0 && !r.diagnostic.empty() && r.error.empty(),
+          "unresolved boundary tetrahedra have explicit nonfatal diagnostics");
     if (!r.converged)
-        std::cerr << "  error: " << r.error << std::endl;
+        std::cerr << "  diagnostic: " << r.diagnostic << std::endl;
     std::string verr;
     check(mesh.validate(&verr), "mesh.validate");
     check(checkEuler(mesh), "Euler");
@@ -259,6 +263,29 @@ void testBoundaryRefineRegression()
               : "缺陷②复现：边界细化未真正生效（安全拒绝，网格未损坏）");
 }
 
+void testIterationBudget()
+{
+    TetMesh3D mesh;
+    mesh.points = { {0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1} };
+    mesh.addTet(0, 1, 2, 3);
+    std::vector<std::array<int, 3>> faces = {
+        {0, 2, 1}, {0, 1, 3}, {1, 2, 3}, {2, 0, 3}
+    };
+    Ruppert3DParams p;
+    p.maxEdgeLength = 0.1;
+    p.maxIterations = 0;
+    const auto r = ruppertRefine3D(mesh, faces, p);
+    check(!r.converged && r.status == Ruppert3DStatus::IterationLimit,
+          "zero iteration budget cannot accept oversize tetrahedra");
+    check(r.error.empty() && !r.diagnostic.empty() && r.unresolvedTets == 1,
+          "budget exhaustion is nonfatal with explicit final diagnostics");
+    check(r.maxEdgeLen > p.maxEdgeLength, "budget exhaustion retains final size diagnostics");
+    p.maxEdgeLength = -1.0;
+    const auto invalid = ruppertRefine3D(mesh, faces, p);
+    check(invalid.status == Ruppert3DStatus::Failed && !invalid.error.empty(),
+          "invalid refinement parameters are fatal");
+}
+
 } // namespace
 
 int main()
@@ -268,6 +295,7 @@ int main()
     testCube();
     testTetrahedronRefine();
     testBoundaryRefineRegression();
+    testIterationBudget();
 
     std::cout << "\n===== 结果: " << (g_failures == 0 ? "全部通过" : "存在失败") << " (failures="
               << g_failures << ") =====" << std::endl;

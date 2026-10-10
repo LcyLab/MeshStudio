@@ -16,9 +16,9 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/Delaunay3D.h"
-#include "core/mesher/GeomPredicates.h"
-#include "core/mesher/TetMesh3D.h"
+#include "mesh/volume/Delaunay3D.h"
+#include "geometry/predicates/GeomPredicates.h"
+#include "mesh/data/TetMesh3D.h"
 
 using namespace mesher;
 
@@ -212,6 +212,21 @@ int main()
     testSingleTet();
     testCubeVolume();
     testRandom3D(300);
+    // Gmsh 双体面网格的共面节点顺序：旧定位把零体积 tet 当成包含任意点。
+    std::vector<Point3D> separated;
+    for(int body=0;body<2;++body) for(int i=0;i<8;++i)
+        separated.push_back({double(2*body+((i>>2)&1)),double((i>>1)&1),double(1-(i&1))});
+    for(int body=0;body<2;++body) for(int axis=0;axis<3;++axis) for(int side=0;side<2;++side) {
+        double p[3]={2*body+0.5,0.5,0.5};p[axis]=side+(axis==0?2*body:0);
+        separated.push_back({p[0],p[1],p[2]});
+    }
+    TetMesh3D separatedMesh;const auto separatedResult=delaunay3D(separatedMesh,separated);
+    check(separatedResult.ok,"separated coplanar point groups remain insertable");
+    if(!separatedResult.ok) std::cout<<separatedResult.error<<'\n';
+    // 清理只能删精确零，不能删平移后仍有正体积的薄单元。
+    TetMesh3D thin;thin.points={{1e6,1e6,1e6},{1e6+1,1e6,1e6},{1e6,1e6+1,1e6},{1e6,1e6,1e6+0.01}};
+    thin.addTet(0,1,2,3);
+    check(pruneDegenerateTets(thin,nullptr)==0 && thin.tets.size()==1,"pruning preserves positive translated thin tetrahedron");
 
     std::cout << "\n===== 结果: " << (g_failures == 0 ? "全部通过" : "存在失败") << " (failures="
               << g_failures << ") =====" << std::endl;

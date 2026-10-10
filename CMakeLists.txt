@@ -9,6 +9,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+# 日常方案只生成产品；验证工程在独立目录显式开启。
+option(BUILD_TESTING "Build MeshStudio tests, replay tools and benchmarks" OFF)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
+
 # 本机依赖路径（可用 -DCMAKE_PREFIX_PATH=... 覆盖）
 list(APPEND CMAKE_PREFIX_PATH
     "F:/Qt/Qt5.14.2/5.14.2/msvc2017_64"
@@ -16,7 +21,7 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 if(MSVC)
-    add_compile_options(/utf-8 /W3)
+    add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:/utf-8;/W3;/EHsc;/fp:precise>")
 endif()
 
 find_package(Qt5 COMPONENTS Widgets Svg Concurrent REQUIRED)
@@ -37,37 +42,45 @@ find_package(VTK COMPONENTS
     REQUIRED)
 
 set(MESHSTUDIO_SOURCES
-    src/main.cpp
-    src/MainWindow.h
-    src/MainWindow.cpp
-    src/ViewportWidget.h
-    src/ViewportWidget.cpp
-    src/core/ShapeLoader.h
-    src/core/ShapeLoader.cpp
-    src/core/ShapeToPolyData.h
-    src/core/ShapeToPolyData.cpp
-    src/core/ShapeTessellator.h
-    src/core/ShapeTessellator.cpp
-    src/core/TetMeshParams.h
-    src/core/TetMeshEngine.h
-    src/core/TetMeshEngine.cpp
-    src/core/MeshProject.h
-    src/core/ProjectPackage.h
-    src/core/ProjectPackage.cpp
-    src/core/ProjectArchive.h
-    src/core/ProjectArchive.cpp
-    src/core/WindowChrome.h
-    src/core/WindowChrome.cpp
-    src/panels/ModelTreePanel.h
-    src/panels/ModelTreePanel.cpp
-    src/panels/MeshSettingsPanel.h
-    src/panels/MeshSettingsPanel.cpp
-    src/panels/OutputDock.h
-    src/panels/OutputDock.cpp
-    src/panels/PropertiesPanel.h
-    src/panels/PropertiesPanel.cpp
-    src/dialogs/ModelTransformDialog.h
-    src/dialogs/ModelTransformDialog.cpp
+    src/app/main.cpp
+    src/ui/window/MainWindow.h
+    src/ui/window/MainWindow.cpp
+    src/ui/viewport/ViewportWidget.h
+    src/ui/viewport/ViewportWidget.cpp
+    src/cad/import/ShapeLoader.h
+    src/cad/import/ShapeLoader.cpp
+    src/cad/import/ShapeToPolyData.h
+    src/cad/import/ShapeToPolyData.cpp
+    src/cad/import/ShapeTessellator.h
+    src/cad/import/ShapeTessellator.cpp
+    src/cad/occ/OccCadGeometry.h
+    src/cad/occ/OccCadGeometry.cpp
+    src/app/meshing/SurfaceMeshEngine.h
+    src/app/meshing/SurfaceMeshEngine.cpp
+    src/cad/occ/OccAlgorithm6Adapter.cpp
+    src/cad/occ/OccMeshVertexParameters.cpp
+    src/app/meshing/TetMeshParams.h
+    src/app/meshing/TetMeshEngine.h
+    src/app/meshing/TetMeshEngine.cpp
+    src/project/MeshProject.h
+    src/project/ProjectPackage.h
+    src/project/ProjectPackage.cpp
+    src/project/ProjectArchive.h
+    src/project/ProjectArchive.cpp
+    src/ui/platform/WindowChrome.h
+    src/ui/platform/WindowChrome.cpp
+    src/ui/panels/ModelTreePanel.h
+    src/ui/panels/ModelTreePanel.cpp
+    src/ui/panels/OutputDock.h
+    src/ui/panels/OutputDock.cpp
+    src/ui/panels/PropertiesPanel.h
+    src/ui/panels/PropertiesPanel.cpp
+    src/ui/dialogs/ModelTransformDialog.h
+    src/ui/dialogs/ModelTransformDialog.cpp
+    src/ui/dialogs/MeshSettingsDialog.h
+    src/ui/dialogs/MeshSettingsDialog.cpp
+    src/ui/forms/DialogFormFactory.h
+    src/ui/forms/DialogFormFactory.cpp
 )
 
 add_executable(MeshStudio WIN32
@@ -125,198 +138,190 @@ target_link_libraries(MeshStudio PRIVATE
 
 vtk_module_autoinit(TARGETS MeshStudio MODULES ${VTK_LIBRARIES})
 
-# ---------- 工程存储层自测（控制台，tests/ProjectArchiveTest.cpp） ----------
-add_executable(ProjectArchiveTest tests/ProjectArchiveTest.cpp
-    src/core/MeshProject.h
-    src/core/TetMeshParams.h
-    src/core/TetMeshEngine.h
-    src/core/ProjectPackage.h
-    src/core/ProjectPackage.cpp
-    src/core/ProjectArchive.h
-    src/core/ProjectArchive.cpp)
-
-target_include_directories(ProjectArchiveTest PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${QUAZIP_INC_DIR}
-    ${ZLIB_INC_DIR})
-
-target_compile_definitions(ProjectArchiveTest PRIVATE QUAZIP_STATIC)
-
-target_link_directories(ProjectArchiveTest PRIVATE
-    ${QUAZIP_LIB_DIR}
-    ${ZLIB_LIB_DIR})
-
-target_link_libraries(ProjectArchiveTest PRIVATE
-    Qt5::Core
-    ${VTK_LIBRARIES}
-    quazip1-qt5.lib
-    zs.lib)
-
-vtk_module_autoinit(TARGETS ProjectArchiveTest MODULES ${VTK_LIBRARIES})
-
 # ---------- 自研网格算法库（纯 C++17，不依赖 Qt/VTK/Gmsh；3D 阶段沿用） ----------
 add_library(mesher STATIC
-    src/core/mesher/MesherTypes.h
-    src/core/mesher/MesherTypes.cpp
-    src/core/mesher/GeomPredicates.h
-    src/core/mesher/GeomPredicates.cpp
-    src/core/mesher/Mesh2D.h
-    src/core/mesher/Mesh2D.cpp
-    src/core/mesher/Delaunay2D.h
-    src/core/mesher/Delaunay2D.cpp
-    src/core/mesher/Constrained2D.h
-    src/core/mesher/Constrained2D.cpp
-    src/core/mesher/Ruppert2D.h
-    src/core/mesher/Ruppert2D.cpp
-    src/core/mesher/TetMesh3D.h
-    src/core/mesher/TetMesh3D.cpp
-    src/core/mesher/Delaunay3D.h
-    src/core/mesher/Delaunay3D.cpp
-    src/core/mesher/Constrained3D.h
-    src/core/mesher/Constrained3D.cpp
-    src/core/mesher/Ruppert3D.h
-    src/core/mesher/Ruppert3D.cpp
-    src/core/mesher/Flips3D.h
-    src/core/mesher/Flips3D.cpp
-    src/core/mesher/Quality3D.h
-    src/core/mesher/Quality3D.cpp
-    src/core/mesher/Smooth3D.h
-    src/core/mesher/Smooth3D.cpp
-    src/core/mesher/SurfaceMesh3D.h
-    src/core/mesher/SurfaceMesh3D.cpp)
+    src/geometry/types/MesherTypes.h
+    src/geometry/types/MesherTypes.cpp
+    src/geometry/predicates/GeomPredicates.h
+    src/geometry/predicates/GeomPredicates.cpp
+    src/mesh/data/Mesh2D.h
+    src/mesh/runtime/MeshingObserver.h
+    src/mesh/data/Mesh2D.cpp
+    src/mesh/data/Mesh2DTransaction.h
+    src/mesh/data/Mesh2DTransaction.cpp
+    src/mesh/surface/legacy/SurfaceDomainState.h
+    src/mesh/surface/legacy/SurfaceDomainState.cpp
+    src/mesh/surface/legacy/SurfaceRefinementQueue.h
+    src/mesh/surface/legacy/SurfaceRefinementQueue.cpp
+    src/mesh/planar/Delaunay2D.h
+    src/mesh/planar/Delaunay2D.cpp
+    src/mesh/planar/Constrained2D.h
+    src/mesh/planar/Constrained2D.cpp
+    src/mesh/surface/legacy/CadBoundaryRegistry.h
+    src/mesh/surface/legacy/CadBoundaryRegistry.cpp
+    src/mesh/surface/legacy/SurfaceChart.h
+    src/mesh/surface/legacy/SurfaceChart.cpp
+    src/mesh/surface/legacy/SurfaceTangentChart.h
+    src/mesh/surface/legacy/SurfaceTangentChart.cpp
+    src/mesh/surface/legacy/SurfaceLocalRemesh.h
+    src/mesh/surface/legacy/SurfaceLocalRemesh.cpp
+    src/mesh/surface/legacy/SurfaceBoundarySizeField.h
+    src/mesh/surface/legacy/SurfaceBoundarySizeField.cpp
+    src/mesh/surface/legacy/SurfaceSizingPolicy.h
+    src/mesh/surface/legacy/SurfaceSizingPolicy.cpp
+    src/mesh/surface/legacy/SurfaceQualityPolicy.h
+    src/mesh/surface/legacy/SurfaceQualityPolicy.cpp
+    src/mesh/surface/legacy/SurfaceRefinementCandidates.h
+    src/mesh/surface/legacy/SurfaceRefinementCandidates.cpp
+    src/mesh/surface/legacy/SurfaceFrontalDelaunay.h
+    src/mesh/surface/legacy/SurfaceFrontalDelaunay.cpp
+    src/mesh/surface/legacy/SurfaceReferenceFront.h
+    src/mesh/surface/legacy/SurfaceReferenceFront.cpp
+    src/mesh/surface/legacy/SurfaceReferenceBoundary.h
+    src/mesh/surface/legacy/SurfaceReferenceBoundary.cpp
+    src/mesh/surface/legacy/SurfaceMeshingPartition.h
+    src/mesh/surface/legacy/SurfaceMeshingPartition.cpp
+    src/mesh/surface/legacy/SurfaceEvaluationCache.h
+    src/mesh/surface/legacy/SurfaceEvaluationCache.cpp
+    src/mesh/planar/Ruppert2D.h
+    src/mesh/planar/Ruppert2D.cpp
+    src/mesh/data/TetMesh3D.h
+    src/mesh/data/TetMesh3D.cpp
+    src/mesh/volume/Delaunay3D.h
+    src/mesh/volume/Delaunay3D.cpp
+    src/mesh/volume/Constrained3D.h
+    src/mesh/volume/Constrained3D.cpp
+    src/mesh/volume/VolumeDomain3D.h
+    src/mesh/volume/VolumeDomain3D.cpp
+    src/mesh/validation/VolumeBoundaryValidation.h
+    src/mesh/validation/VolumeBoundaryValidation.cpp
+    src/mesh/volume/Ruppert3D.h
+    src/mesh/volume/Ruppert3D.cpp
+    src/mesh/volume/Flips3D.h
+    src/mesh/volume/Flips3D.cpp
+    src/mesh/volume/Quality3D.h
+    src/mesh/volume/Quality3D.cpp
+    src/mesh/volume/Smooth3D.h
+    src/mesh/volume/Smooth3D.cpp
+    src/mesh/surface/legacy/SurfaceMesh3D.h
+    src/mesh/surface/legacy/SurfaceMesh3D.cpp
+    src/mesh/validation/SurfaceMeshValidation.h
+    src/mesh/validation/SurfaceMeshValidation.cpp
+    src/mesh/surface/legacy/CadSurfaceMesher.h
+    src/mesh/surface/legacy/CadSurfaceMesher.cpp)
 target_include_directories(mesher PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+# 固定 Gmsh 流程的自研复现模块：核心不链接 Gmsh。
+target_sources(mesher PRIVATE src/mesh/surface/algorithm6/pipeline/SurfaceGenerator.cpp
+    src/mesh/surface/algorithm6/pipeline/PeriodicSurfaceGeneration.cpp
+    src/mesh/surface/algorithm6/pipeline/MeshAssembly.cpp)
+target_sources(mesher PRIVATE
+    src/mesh/surface/algorithm6/data/SurfaceTypes.h
+    src/geometry/numerics/NativeSinCos.h
+    src/geometry/numerics/NativeSinCos.cpp
+    src/mesh/surface/algorithm6/boundary/MeshSizeEvaluator.h
+    src/mesh/surface/algorithm6/boundary/MeshSizeEvaluator.cpp
+    src/mesh/surface/algorithm6/boundary/CurveDiscretization.h
+    src/mesh/surface/algorithm6/boundary/CurveDiscretization.cpp
+    src/mesh/surface/algorithm6/boundary/BoundaryRegistry.h
+    src/mesh/surface/algorithm6/boundary/BoundaryRegistry.cpp
+    src/mesh/surface/algorithm6/chart/FaceChart.h
+    src/mesh/surface/algorithm6/chart/FaceChart.cpp
+    src/mesh/surface/algorithm6/chart/PeriodicFaceChart.h
+    src/mesh/surface/algorithm6/chart/PeriodicFaceChart.cpp
+    src/mesh/surface/algorithm6/initial/DivideAndConquerTriangulation.h
+    src/mesh/surface/algorithm6/initial/DivideAndConquerTriangulation.cpp
+    src/mesh/surface/algorithm6/initial/WalkTriangulation.h
+    src/mesh/surface/algorithm6/initial/WalkTriangulation.cpp
+    src/mesh/surface/algorithm6/data/HalfEdgeTopology.h
+    src/mesh/surface/algorithm6/data/HalfEdgeTopology.cpp
+    src/mesh/surface/algorithm6/initial/ConstraintRecovery.h
+    src/mesh/surface/algorithm6/initial/ConstraintRecovery.cpp
+    src/mesh/surface/algorithm6/initial/DomainClassification.h
+    src/mesh/surface/algorithm6/initial/DomainClassification.cpp
+    src/mesh/surface/algorithm6/initial/InitialUvLegalization.h
+    src/mesh/surface/algorithm6/initial/InitialUvLegalization.cpp
+    src/mesh/surface/algorithm6/data/BdsTopology.h
+    src/mesh/surface/algorithm6/data/BdsTypes.h
+    src/mesh/surface/algorithm6/data/BdsTopology.cpp
+    src/mesh/surface/algorithm6/bds/BdsMeshConversion.h
+    src/mesh/surface/algorithm6/bds/BdsMeshConversion.cpp
+    src/mesh/surface/algorithm6/data/FaceMeshTypes.h
+    src/mesh/surface/algorithm6/postprocess/FaceMeshConversion.h
+    src/mesh/surface/algorithm6/postprocess/FaceMeshConversion.cpp
+    src/mesh/surface/algorithm6/postprocess/PeriodicSeamReconstruction.h
+    src/mesh/surface/algorithm6/postprocess/PeriodicSeamReconstruction.cpp
+    src/mesh/surface/algorithm6/front/NodeSizeInitialization.h
+    src/mesh/surface/algorithm6/front/NodeSizeInitialization.cpp
+    src/mesh/surface/algorithm6/data/FrontMeshTypes.h
+    src/mesh/surface/algorithm6/front/FrontTriangleInitialization.h
+    src/mesh/surface/algorithm6/front/FrontTriangleInitialization.cpp
+    src/mesh/surface/algorithm6/front/FrontTriangleOrdering.h
+    src/mesh/surface/algorithm6/front/FrontTriangleOrdering.cpp
+    src/mesh/surface/algorithm6/front/FrontQueue.h
+    src/mesh/surface/algorithm6/front/FrontQueue.cpp
+    src/mesh/surface/algorithm6/front/FrontPointPlacement.h
+    src/mesh/surface/algorithm6/front/FrontPointPlacement.cpp
+    src/mesh/surface/algorithm6/front/FrontPointLocation.h
+    src/mesh/surface/algorithm6/front/FrontPointLocation.cpp
+    src/mesh/surface/algorithm6/front/FrontCavity.h
+    src/mesh/surface/algorithm6/front/FrontCavity.cpp
+    src/mesh/surface/algorithm6/front/FrontInsertion.h
+    src/mesh/surface/algorithm6/front/FrontInsertion.cpp
+    src/mesh/surface/algorithm6/chart/ParametricDomain.h
+    src/mesh/surface/algorithm6/chart/ParametricDomain.cpp
+    src/mesh/surface/algorithm6/front/FrontGeneration.h
+    src/mesh/surface/algorithm6/front/FrontGeneration.cpp
+    src/mesh/surface/algorithm6/postprocess/FrontMeshTransfer.h
+    src/mesh/surface/algorithm6/postprocess/FrontMeshTransfer.cpp
+    src/mesh/surface/algorithm6/postprocess/SurfaceSmoothing.h
+    src/mesh/surface/algorithm6/postprocess/SurfaceSmoothing.cpp
+    src/mesh/surface/algorithm6/geometry/MeshVertexParameters.h
+    src/mesh/surface/algorithm6/geometry/MeshVertexParameters.cpp
+    src/mesh/surface/algorithm6/bds/BdsConstraintRecovery.h
+    src/mesh/surface/algorithm6/bds/BdsConstraintRecovery.cpp
+    src/mesh/surface/algorithm6/bds/BdsCurveRecovery.h
+    src/mesh/surface/algorithm6/bds/BdsCurveRecovery.cpp
+    src/mesh/surface/algorithm6/bds/PeriodicBdsRecovery.h
+    src/mesh/surface/algorithm6/bds/PeriodicBdsRecovery.cpp
+    src/mesh/surface/algorithm6/bds/BdsDomainClassification.h
+    src/mesh/surface/algorithm6/bds/BdsDomainClassification.cpp
+    src/mesh/surface/algorithm6/bds/BdsNodeSizeInitialization.h
+    src/mesh/surface/algorithm6/bds/BdsNodeSizeInitialization.cpp
+    src/mesh/surface/algorithm6/bds/BdsInteriorPreparation.h
+    src/mesh/surface/algorithm6/bds/BdsInteriorPreparation.cpp
+    src/mesh/surface/algorithm6/bds/BdsSwapQualification.h
+    src/mesh/surface/algorithm6/bds/BdsSwapQualification.cpp
+    src/mesh/surface/algorithm6/bds/InitialMeshLegalization.h
+    src/mesh/surface/algorithm6/bds/InitialMeshLegalization.cpp
+    src/mesh/surface/algorithm6/initial/InitialTriangulation.h
+    src/mesh/surface/algorithm6/initial/InitialTriangulation.cpp
+    src/mesh/surface/algorithm6/geometry/SurfaceMetric.h
+    src/mesh/surface/algorithm6/geometry/SurfaceMetric.cpp
+    src/geometry/numerics/LinearSystem3.h
+    src/geometry/numerics/LinearSystem3.cpp
+    src/geometry/numerics/SingularMatrixInverse3.h
+    src/geometry/numerics/SingularMatrixInverse3.cpp
+    src/mesh/surface/algorithm6/geometry/SurfaceParameterInverse.h
+    src/mesh/surface/algorithm6/geometry/SurfaceParameterInverse.cpp
+    src/mesh/surface/algorithm6/geometry/CurveSurfaceIntersection.h
+    src/mesh/surface/algorithm6/geometry/CurveSurfaceIntersection.cpp)
+if(MSVC AND CMAKE_SIZEOF_VOID_P EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64|amd64|x86_64")
+    enable_language(ASM_MASM)
+    target_sources(mesher PRIVATE src/geometry/numerics/NativeSinCos_x64.asm)
+    target_compile_definitions(mesher PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:MESHSTUDIO_NATIVE_SINCOS_X64>")
+endif()
 
 # 主程序使用自研引擎（取代 Gmsh）
 target_link_libraries(MeshStudio PRIVATE mesher)
 
-# ---------- 2D Delaunay 原型自测（控制台，tests/Delaunay2DTest.cpp） ----------
-add_executable(Delaunay2DTest tests/Delaunay2DTest.cpp)
-target_link_libraries(Delaunay2DTest PRIVATE mesher)
+include(cmake/MeshStudioSourceGroups.cmake)
 
-# ---------- 3D Delaunay 四面体化自测（控制台，tests/Delaunay3DTest.cpp） ----------
-add_executable(Delaunay3DTest tests/Delaunay3DTest.cpp)
-target_link_libraries(Delaunay3DTest PRIVATE mesher)
-
-# ---------- 3D 表面约束恢复自测（控制台，tests/Constrained3DTest.cpp） ----------
-add_executable(Constrained3DTest tests/Constrained3DTest.cpp)
-target_link_libraries(Constrained3DTest PRIVATE mesher)
-
-# ---------- 3D Delaunay 细化自测（控制台，tests/Ruppert3DTest.cpp） ----------
-add_executable(Ruppert3DTest tests/Ruppert3DTest.cpp)
-target_link_libraries(Ruppert3DTest PRIVATE mesher)
-
-# ---------- 3D 翻转框架自测（控制台，tests/Flips3DTest.cpp） ----------
-add_executable(Flips3DTest tests/Flips3DTest.cpp)
-target_link_libraries(Flips3DTest PRIVATE mesher)
-
-# ---------- 顶点平滑自测（控制台，tests/Smooth3DTest.cpp） ----------
-add_executable(Smooth3DTest tests/Smooth3DTest.cpp)
-target_link_libraries(Smooth3DTest PRIVATE mesher)
-
-# ---------- 表面网格输入准备自测（控制台，tests/SurfaceMesh3DTest.cpp） ----------
-add_executable(SurfaceMesh3DTest tests/SurfaceMesh3DTest.cpp)
-target_link_libraries(SurfaceMesh3DTest PRIVATE mesher)
-
-# ---------- 自研引擎端到端自测（控制台，需 Qt+VTK，tests/TetMeshEngineTest.cpp） ----------
-add_executable(TetMeshEngineTest
-    tests/TetMeshEngineTest.cpp
-    src/core/TetMeshEngine.cpp
-)
-target_include_directories(TetMeshEngineTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(TetMeshEngineTest PRIVATE
-    Qt5::Core
-    ${VTK_LIBRARIES}
-    mesher
-)
-
-# ---------- B-Rep 几何输入端到端自测（控制台，需 Qt+VTK+OCC） ----------
-# 验证 STEP/IGES/BRep → BRepMesh 逐面离散 → 容差焊接 → 四面体引擎 这条链路。
-# 与 TetMeshEngineTest 的区别：这里额外链接 OCC（离散化必须用 OCC）。
-add_executable(BRepInputTest
-    tests/BRepInputTest.cpp
-    src/core/TetMeshEngine.cpp
-    src/core/ShapeLoader.cpp
-    src/core/ShapeToPolyData.cpp
-    src/core/ShapeTessellator.cpp
-)
-target_include_directories(BRepInputTest PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${OCC_INCLUDE_DIR})
-target_link_directories(BRepInputTest PRIVATE
-    "$<$<CONFIG:Debug>:${OCC_LIB_DIR_DEBUG}>"
-    "$<$<CONFIG:Release>:${OCC_LIB_DIR}>")
-target_link_libraries(BRepInputTest PRIVATE
-    Qt5::Core
-    ${VTK_LIBRARIES}
-    mesher
-    "$<$<CONFIG:Debug>:${OCC_LIBS_D}>"
-    "$<$<CONFIG:Release>:${OCC_LIBS}>"
-)
-vtk_module_autoinit(TARGETS BRepInputTest MODULES ${VTK_LIBRARIES})
-
-
-
-# ============================================================
-# CTest 注册（任务 #12）
-# ------------------------------------------------------------
-# 目的：把全部自测纳入 `ctest`，一条命令跑完整回归，避免手工逐个执行时
-# 漏测（此前 TetMeshEngineTest 甚至未注册，只能靠人记得手动带参数跑）。
-#
-# 用法（在 build 目录）：
-#   ctest -C Release --output-on-failure
-# 只跑单元测试（跳过较慢的端到端）：
-#   ctest -C Release -L unit --output-on-failure
-#
-# 标签：
-#   unit   —— 纯算法单元测试（无 Qt/VTK 依赖，快）
-#   e2e    —— 端到端链路（需 Qt+VTK，读 test_data/*.stl）
-# ============================================================
-enable_testing()
-
-# ---- 单元测试（8 个）----
-set(MESHSTUDIO_UNIT_TESTS
-    Delaunay2DTest
-    Delaunay3DTest
-    Constrained3DTest
-    Ruppert3DTest
-    Flips3DTest
-    Smooth3DTest
-    SurfaceMesh3DTest
-    ProjectArchiveTest
-)
-foreach(t ${MESHSTUDIO_UNIT_TESTS})
-    add_test(NAME ${t} COMMAND ${t})
-    set_tests_properties(${t} PROPERTIES LABELS unit TIMEOUT 600)
-endforeach()
-
-# ---- 端到端（TetMeshEngineTest，需输入文件参数）----
-# cube.stl：最简单的回归基线（10 节点 / 11 体单元 / minSICN=0.577350）
-# cube10.stl：带退化的压力用例（103 节点 / 405 体单元 / 含 sliver）
-set(MESHSTUDIO_TEST_DATA ${CMAKE_CURRENT_SOURCE_DIR}/test_data)
-if(EXISTS ${MESHSTUDIO_TEST_DATA}/cube.stl)
-    add_test(NAME TetMeshEngineTest_cube
-             COMMAND TetMeshEngineTest ${MESHSTUDIO_TEST_DATA}/cube.stl)
-    set_tests_properties(TetMeshEngineTest_cube PROPERTIES LABELS e2e TIMEOUT 600)
-endif()
-if(EXISTS ${MESHSTUDIO_TEST_DATA}/cube10.stl)
-    add_test(NAME TetMeshEngineTest_cube10
-             COMMAND TetMeshEngineTest ${MESHSTUDIO_TEST_DATA}/cube10.stl)
-    set_tests_properties(TetMeshEngineTest_cube10 PROPERTIES LABELS e2e TIMEOUT 600)
-endif()
-
-# ---- B-Rep 输入链路（STEP/IGES/BRep → 离散 → 焊接 → 四面体）----
-# 这两个文件是 B-Rep 格式，不携带三角面片，正好覆盖新增的离散化路径。
-#   * cube2.stp  —— 轻量，跑**全链路**（含引擎）作端到端基线；
-#   * ball.brep  —— 曲面 + 负坐标，验证「离散 + 焊接」。
-#     不带 --with-engine：球面点集凸且近似共球，Delaunay 高度退化、
-#     7692 个约束面的 CDT 是分钟级，不适合放进默认回归。
-if(EXISTS ${MESHSTUDIO_TEST_DATA}/cube2.stp)
-    add_test(NAME BRepInputTest_step
-             COMMAND BRepInputTest --with-engine ${MESHSTUDIO_TEST_DATA}/cube2.stp)
-    set_tests_properties(BRepInputTest_step PROPERTIES LABELS e2e TIMEOUT 600)
-endif()
-if(EXISTS ${MESHSTUDIO_TEST_DATA}/ball.brep)
-    add_test(NAME BRepInputTest_brep
-             COMMAND BRepInputTest ${MESHSTUDIO_TEST_DATA}/ball.brep)
-    set_tests_properties(BRepInputTest_brep PROPERTIES LABELS e2e TIMEOUT 600)
+if(BUILD_TESTING)
+    enable_testing()
+    include(cmake/MeshStudioTests.cmake)
+else()
+    # 同一目录曾启用测试时，覆盖旧注册清单，避免 ctest 继续列出过期工程。
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/CTestTestfile.cmake"
+        CONTENT "# MeshStudio: BUILD_TESTING=OFF; no tests registered.\n")
 endif()

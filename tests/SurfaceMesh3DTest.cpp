@@ -10,7 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/SurfaceMesh3D.h"
+#include "mesh/surface/legacy/SurfaceMesh3D.h"
+#include "mesh/validation/SurfaceMeshValidation.h"
 
 using namespace mesher;
 
@@ -184,6 +185,20 @@ int main()
     testToleranceWeld();
     testCrossCellWeld();
     testLargeOffsetAndNegative();
+    {
+        SurfaceMesh3D mesh;mesh.vertices={{0,0,0},{2,0,0},{0,2,0},{.3,.3,2},{.5,.3,2},{.3,.5,2}};
+        mesh.triangles={{0,1,2},{3,4,5}};std::string error;
+        const std::vector<bool> left{true,false},right{false,true},none{false,false},invalid{true};
+        check(validateSurfaceIntersections(mesh,&error),"separate triangle baseline is valid");
+        check(!validateSurfaceIntersections(mesh,&error,0,nullptr,{},&invalid),"invalid active mask is rejected");
+        mesh.vertices[3].z=-1;mesh.vertices[4].z=1;mesh.vertices[5].z=1;
+        check(!validateSurfaceIntersections(mesh,&error,0,nullptr,{},&left)&&
+              !validateSurfaceIntersections(mesh,&error,0,nullptr,{},&right),"changed/unchanged triangle penetration is detected in either order");
+        mesh.vertices[3]={.3,.3,2};mesh.vertices[4]={.5,.3,2};mesh.vertices[5]={.3,.5,2};
+        check(validateSurfaceIntersections(mesh,&error,0,nullptr,{},&none),"unchanged valid baseline can be reused");
+        mesh.triangles[1]={3,3,4};
+        check(!validateSurfaceIntersections(mesh,&error,0,nullptr,{},&none),"inactive triangles still require valid connectivity and area");
+    }
 
     std::cout << "\n===== result: " << (g_failures == 0 ? "ALL PASS" : "FAILURES")
               << " (failures=" << g_failures << ") =====" << std::endl;

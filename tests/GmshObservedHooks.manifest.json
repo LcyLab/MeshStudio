@@ -1,0 +1,129 @@
+{
+  "version": "4.15.2",
+  "archive_sha256": "be3f66f225d27ba9fa014f07e83169285da8a051b0e8ab7103d88066b39bdd3e",
+  "patch_sha256": "e9128274f9f44dc7f431b3e7b724c7c6f5b5b9acab2b2be0b79c49e9d326e719",
+  "files": {
+    "src/mesh/meshGEdge.cpp": {
+      "observed_sha256": "e455c0705055c48a63d26d83213f6528774e459407e944b438ddf0c0c5142621",
+      "pristine_sha256": "9db5cf4dd0f39ae6bb57b633f5da75ecd8d52abe35233b6be685327fe14a5a54"
+    },
+    "src/mesh/BackgroundMeshTools.cpp": {
+      "observed_sha256": "c7e4b8a39ce47da0f574a3a161b4a6fea7a7578b0b96083b22d0f230ccc2c6d8",
+      "pristine_sha256": "c14ee81f8e5b763e4829066f9dafc62eaac5130a305da9cb49f3233152904bea"
+    },
+    "src/mesh/meshTriangulation.cpp": {
+      "observed_sha256": "9d5a6e1471316d9bff400b18a1b4665220fca5081131332010a2c252a04eed3e",
+      "pristine_sha256": "2e6ce7a0b9e29dd8d6ccbbd11ee8d837d50999fae6f8633c67f6a202f83716ff"
+    },
+    "src/mesh/meshGFaceBDS.cpp": {
+      "observed_sha256": "f3c7cdf3fbc565a1d63bca7b1b83d31776af21d72a8fe5f948a926a95625fccd",
+      "pristine_sha256": "257097122f862b519c44adeda94eaa7af6942c9089691756774c34040e734416"
+    },
+    "src/mesh/meshGFaceDelaunayInsertion.cpp": {
+      "observed_sha256": "2b6bbf0ebab2c814b73e9f98549179f64ced7823dc2c24797e66a5f8b252ca1f",
+      "pristine_sha256": "6b80c9a6b30f6879f6b7673643e43199ad8c0b7f848d5793554dd46ab813d611"
+    },
+    "src/mesh/meshGFaceOptimize.cpp": {
+      "observed_sha256": "5829eb02c66e125599d3c06cebf0f6b2e35d139d524140684a87f3e07b4e6fab",
+      "pristine_sha256": "8b0928ed5c5b79cbf0814fa014012d0d77a09017f21a956209c8b414c1083262"
+    },
+    "src/mesh/meshGFace.cpp": {
+      "observed_sha256": "d2b1d0a91a78c7c88f0da0f947645ccd40d4c3284cc1d17971f886870750e9f3",
+      "pristine_sha256": "2e43546c141b89feb6a5349e911b00b2cf506a918f61764c3f568146b3da6e99"
+    },
+    "src/mesh/DivideAndConquer.cpp": {
+      "observed_sha256": "2825f655f6a1a2f524fd693cdd45dee354587b6298f3c90c141ac92e8f950bc2",
+      "pristine_sha256": "f6de1528c0bdbce4ad4af76d77264aa8ce1bb32462e07be6cb408d249a4366d3"
+    },
+    "src/mesh/BDS.cpp": {
+      "observed_sha256": "2e6916b18c95606caf8ecfa5700ce8e8bbc02654a7c489a8369e623f9a25f18f",
+      "pristine_sha256": "5e013a416dac1274552a9b8dfc9b8799fd103a256f42a208ed44f5731c174db9"
+    },
+    "src/geo/MVertex.cpp": {
+      "observed_sha256": "7c9769c782822e8d0925ab8cc08c2975ad01f8b1db8c73ad0cc1c98d6f024b57",
+      "pristine_sha256": "0b49fcba8fe823fe25c169cc2ca978def94507966385ed825fe46010fb18c257"
+    },
+    "src/geo/GFace.cpp": {
+      "observed_sha256": "dba3b2e904f20a17d3badcf340f19aad0eb63b6474b79f136b36fc6a84607233",
+      "pristine_sha256": "3c7ed8db88bb6e9755808733e1f8acbffa2a864e09f67dc36e74d22112348fa9"
+    },
+    "src/mesh/MeshStudioTrace.h": {
+      "observed_sha256": "89e0c6cae3a712fcb6ea56efe836c47a2b981fa1eb37bf889e58b54ea09db51c"
+    }
+  },
+  "header_encoding": "UTF-8 with BOM in external reference copy",
+  "patch_replay_EOL": "Normalize all patched replay files to LF after Git apply; preserve the header BOM.",
+  "oracle_entry_points": [
+    "meshstudioReferenceBdsConstraintRecovery",
+    "meshstudioReferenceBdsParameterArea",
+    "meshstudioReferenceBdsRecoveryIntersection",
+    "meshstudioReferenceBdsToFaceMesh",
+    "meshstudioReferenceBdsTopology",
+    "meshstudioReferenceBoundaryProperties",
+    "meshstudioReferenceBoundaryRecovery",
+    "meshstudioReferenceConstraintRecovery",
+    "meshstudioReferenceDivideAndConquer",
+    "meshstudioReferenceDocRecordCounts",
+    "meshstudioReferenceFaceProjection",
+    "meshstudioReferenceFaceUses",
+    "meshstudioReferenceFilterCurve",
+    "meshstudioReferenceFrontCavityLeaf",
+    "meshstudioReferenceFrontGeneration",
+    "meshstudioReferenceFrontInsertionLeaf",
+    "meshstudioReferenceFrontMeshTransfer",
+    "meshstudioReferenceFrontPoint",
+    "meshstudioReferenceFrontPointInsertionLeaf",
+    "meshstudioReferenceFrontQueueLeaf",
+    "meshstudioReferenceFrontQueueState",
+    "meshstudioReferenceIncircle",
+    "meshstudioReferenceInitialBdsSwap",
+    "meshstudioReferenceInitialChart",
+    "meshstudioReferenceInitialMetricCircle",
+    "meshstudioReferenceIntersection",
+    "meshstudioReferenceMeshVertexParameters",
+    "meshstudioReferenceMetricCircle",
+    "meshstudioReferenceOrdinaryBdsBoundary",
+    "meshstudioReferenceOrdinaryBdsConversion",
+    "meshstudioReferenceOrdinaryBdsDomain",
+    "meshstudioReferenceOrdinaryBdsEmbedded",
+    "meshstudioReferenceOrdinaryBdsInterior",
+    "meshstudioReferenceOrdinaryBdsMetric",
+    "meshstudioReferenceOrdinaryBdsNodeSizes",
+    "meshstudioReferenceOrdinaryConstraintRecovery",
+    "meshstudioReferenceOrdinaryFaceMesh",
+    "meshstudioReferenceOrdinaryFrontNodeSizes",
+    "meshstudioReferenceOrdinaryFrontQueue",
+    "meshstudioReferenceOrdinaryFrontTriangles",
+    "meshstudioReferenceOrdinaryInitialPipeline",
+    "meshstudioReferenceOrdinaryInitialTriangulation",
+    "meshstudioReferenceOrient2d",
+    "meshstudioReferenceParametricDomain",
+    "meshstudioReferencePeriodicBdsConversion",
+    "meshstudioReferencePeriodicBdsDomain",
+    "meshstudioReferencePeriodicBdsInterior",
+    "meshstudioReferencePeriodicBdsMetric",
+    "meshstudioReferencePeriodicBdsRecovery",
+    "meshstudioReferencePeriodicBoundaryChart",
+    "meshstudioReferencePeriodicEmbeddedChart",
+    "meshstudioReferencePeriodicEmbeddedInput",
+    "meshstudioReferencePeriodicFaceMesh",
+    "meshstudioReferencePeriodicFrontNodeSizes",
+    "meshstudioReferencePeriodicFrontQueue",
+    "meshstudioReferencePeriodicFrontTriangles",
+    "meshstudioReferencePeriodicInitialTriangulation",
+    "meshstudioReferencePeriodicLoop",
+    "meshstudioReferencePeriodicLoopCount",
+    "meshstudioReferencePeriodicLoopInput",
+    "meshstudioReferencePhysicalCircle",
+    "meshstudioReferenceRecoveryIntersection",
+    "meshstudioReferenceSingularMatrixInverse3",
+    "meshstudioReferenceSmoothCurve",
+    "meshstudioReferenceSolve3",
+    "meshstudioReferenceSurfaceParameterInverse",
+    "meshstudioReferenceSurfaceSmoothing",
+    "meshstudioReferenceSurfaceSmoothingClassified",
+    "meshstudioReferenceTrueBoundary",
+    "meshstudioReferenceTrueBoundaryCurves",
+    "meshstudioReferenceWalkTriangulation"
+  ]
+}

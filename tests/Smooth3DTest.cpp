@@ -13,13 +13,13 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/Constrained3D.h"
-#include "core/mesher/Delaunay3D.h"
-#include "core/mesher/Flips3D.h"
-#include "core/mesher/Quality3D.h"
-#include "core/mesher/Ruppert3D.h"
-#include "core/mesher/Smooth3D.h"
-#include "core/mesher/TetMesh3D.h"
+#include "mesh/volume/Constrained3D.h"
+#include "mesh/volume/Delaunay3D.h"
+#include "mesh/volume/Flips3D.h"
+#include "mesh/volume/Quality3D.h"
+#include "mesh/volume/Ruppert3D.h"
+#include "mesh/volume/Smooth3D.h"
+#include "mesh/data/TetMesh3D.h"
 
 using namespace mesher;
 
@@ -82,7 +82,8 @@ void testSmoothCube()
     rp.maxEdgeLength = 0.3;
     rp.radiusEdgeRatio = 2.0;
     Ruppert3DResult r = ruppertRefine3D(mesh, faces, rp);
-    check(r.converged, "ruppertRefine3D converged");
+    check(!r.converged && r.unresolvedTets > 0 && !r.diagnostic.empty() && r.error.empty(),
+          "boundary size failures remain explicitly unresolved before smoothing");
 
     const int tets0 = static_cast<int>(mesh.tets.size());
     const double vol0 = mesh.totalVolume();
@@ -116,7 +117,9 @@ void testSmoothCube()
               << " slivers=" << s.after.sliverCount
               << " worstRho=" << s.after.worstRadiusEdge
               << " degenerate=" << s.after.degenerateCount << std::endl;
+    check(s.qualityRejectedMoves > 0, "quality guard rejects harmful candidate movements");
     std::cout << "  moved=" << s.movedVertices << " rejected=" << s.rejectedMoves
+              << " qualityRejected=" << s.qualityRejectedMoves
               << " tets=" << tets0 << std::endl;
 
     // 平滑后 restoreDelaunay：v1 在残留极端退化单元时仍会被预检查拒绝（0 翻转），

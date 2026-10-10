@@ -515,11 +515,14 @@ QWidget#ribbonPage QToolButton:checked {
     color: #452750;
     font-weight: 600;
 }
-QToolButton#ribbonLargeButton {
+QToolButton#ribbonLargeButton,
+QToolButton#generateSurfaceAction,
+QToolButton#generateVolumeAction {
     min-width: 84px;
     padding: 7px 8px 5px;
 }
-QToolButton#ribbonSmallButton {
+QToolButton#ribbonSmallButton,
+QToolButton#cancelSurfaceAction {
     min-height: 34px;
     padding: 5px 10px;
     font-size: 15px;
@@ -554,3 +557,37 @@ QToolTip {
     border-radius: 4px;
     font-size: 14px;
 }
+
+/* DialogFormFactory 的统一表单模板；只作用于使用工厂的弹窗。 */
+QDialog[formDialog="true"], QDialog[formDialog="true"] QWidget { background-color: #FFFFFF; }
+QDialog[formDialog="true"] QLabel#formDialogTitle { font-size: 20px; font-weight: 600; color: #28232C; }
+QDialog[formDialog="true"] QLabel[formRole="note"] { font-size: 12px; color: #7A7481; background: transparent; }
+QDialog[formDialog="true"] QLabel#formSectionTitle {
+    font-size: 13px; font-weight: 600; color: #583266;
+    border-bottom: 1px solid #ECE9F0; padding-bottom: 8px;
+}
+QDialog[formDialog="true"] QLabel#formFieldLabel { font-size: 14px; color: #514B57; }
+QDialog[formDialog="true"] QTabWidget::pane { border: none; }
+QDialog[formDialog="true"] QTabBar::tab {
+    background: #F0EDF3; color: #756B7C; padding: 7px 22px;
+    border: none; border-radius: 5px; font-size: 14px;
+}
+QDialog[formDialog="true"] QTabBar::tab:selected { background: #583266; color: #FFFFFF; font-weight: 500; }
+QDialog[formDialog="true"] QDoubleSpinBox,
+QDialog[formDialog="true"] QSpinBox {
+    background: #FAF9FB; color: #302A36; border: 1px solid #E3DFE8;
+    border-radius: 5px; padding: 3px 10px; min-height: 24px;
+    font-size: 15px; selection-background-color: #E7DAEE; selection-color: #302A36;
+}
+QDialog[formDialog="true"] QDoubleSpinBox:focus,
+QDialog[formDialog="true"] QSpinBox:focus { background: #FFFFFF; border-color: #9277A0; }
+QDialog[formDialog="true"] QWidget#formActions { border-top: 1px solid #ECE9F0; }
+QDialog[formDialog="true"] QPushButton[formRole="tertiary"] {
+    background: transparent; color: #7A7481; border: none; padding: 6px 0;
+}
+QDialog[formDialog="true"] QPushButton[formRole="tertiary"]:hover { color: #583266; }
+QDialog[formDialog="true"] QToolButton[formRole="disclosure"] {
+    color: #756B7C; border: none; padding: 3px 0; font-size: 13px; text-align: left;
+}
+QDialog[formDialog="true"] QToolButton[formRole="disclosure"]:hover { color: #583266; background: transparent; }
+QDialog[formDialog="true"] QLabel#meshDialogError { color: #B33C39; font-size: 12px; }

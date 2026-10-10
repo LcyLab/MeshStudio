@@ -33,6 +33,9 @@
 *.obj    -text
 *.pdb    -text
 
+# 源码补丁按原始字节保存，避免换行转换破坏 SHA256 校验。
+*.patch  -text
+
 # ---- 文本：仓库内统一 LF ----
 *.c      text eol=lf
 *.cc     text eol=lf

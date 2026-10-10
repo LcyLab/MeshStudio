@@ -15,9 +15,9 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/Constrained3D.h"
-#include "core/mesher/Delaunay3D.h"
-#include "core/mesher/TetMesh3D.h"
+#include "mesh/volume/Constrained3D.h"
+#include "mesh/volume/Delaunay3D.h"
+#include "mesh/data/TetMesh3D.h"
 
 using namespace mesher;
 

@@ -15,12 +15,14 @@
 #include <string>
 #include <vector>
 
-#include "core/mesher/Constrained3D.h"
-#include "core/mesher/Delaunay3D.h"
-#include "core/mesher/Flips3D.h"
-#include "core/mesher/GeomPredicates.h"
-#include "core/mesher/Ruppert3D.h"
-#include "core/mesher/TetMesh3D.h"
+#include "mesh/volume/Constrained3D.h"
+#include "mesh/volume/Delaunay3D.h"
+#include "mesh/volume/Flips3D.h"
+#include "mesh/volume/Quality3D.h"
+#include "mesh/volume/Smooth3D.h"
+#include "geometry/predicates/GeomPredicates.h"
+#include "mesh/volume/Ruppert3D.h"
+#include "mesh/data/TetMesh3D.h"
 
 using namespace mesher;
 
@@ -167,7 +169,12 @@ void testRestoreAfterRefine()
     Ruppert3DParams p;
     p.maxEdgeLength = 0.5;
     Ruppert3DResult r = ruppertRefine3D(mesh, faces, p);
-    check(r.converged, "ruppertRefine3D converged");
+    check(r.status!=Ruppert3DStatus::Failed && r.error.empty(), "refinement produced a valid mesh for flip testing");
+    const auto quality=summarizeQuality(mesh,meanEdgeLength3D(mesh));
+    const bool meetsCriteria=quality.maxEdgeLength<=p.maxEdgeLength*(1+1e-8) &&
+        quality.worstRadiusEdge<=p.radiusEdgeRatio*(1+1e-8) && quality.degenerateCount==0;
+    check(r.converged==meetsCriteria && (r.converged || !r.diagnostic.empty()),
+          "refinement convergence matches independently measured final criteria");
 
     const double vol0 = mesh.totalVolume();
     const int before = localDelaunayViolations(mesh);

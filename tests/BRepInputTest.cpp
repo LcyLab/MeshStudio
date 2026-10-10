@@ -33,10 +33,10 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
-#include "core/ShapeTessellator.h"
-#include "core/TetMeshEngine.h"
-#include "core/TetMeshParams.h"
-#include "core/mesher/SurfaceMesh3D.h"
+#include "cad/import/ShapeTessellator.h"
+#include "app/meshing/TetMeshEngine.h"
+#include "app/meshing/TetMeshParams.h"
+#include "mesh/surface/legacy/SurfaceMesh3D.h"
 
 namespace {
 
